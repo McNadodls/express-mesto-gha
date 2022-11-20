@@ -6,13 +6,14 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "lint": "npx eslint ."
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/McNadodls/express-mesto-gha.git"
   },
-  "author": "",
+  "author": "Dmitry Mansurov",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/McNadodls/express-mesto-gha/issues"
