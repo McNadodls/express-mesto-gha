@@ -1,4 +1,4 @@
-const { getCard, getCardId, createCard } = require('../controllers/card');
+const { getCard, createCard, deleteCard, putCardLike, deleteCardLike} = require('../controllers/card');
 const router = require('./user');
 
 router.get('/', getCard);
