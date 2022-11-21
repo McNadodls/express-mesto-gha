@@ -25,6 +25,4 @@ app.use((req, res) => {
   res.status(error.statusCode).send({ message: error.message });
 });
 
-app.listen(PORT, () => {
-  console.log('App listening on port');
-});
+app.listen(PORT);

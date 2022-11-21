@@ -1,31 +1,44 @@
 const User = require('../models/user');
-const validityErr = require('../errors/validityErr');
+const { NOT_FOUND, NOT_VALID, SERVER_ERROR } = require('../errors/constatnts');
 const NotFound = require('../errors/NotFound');
 
 module.exports.getUser = (req, res) => {
   User.find({})
-    .orFail(() => {
-      throw new NotFound(`Пользователь ${req.user._id} не найден`);
-    })
     .then((user) => res.send({ data: user }))
-    .catch((err) => validityErr(res, err));
+    .catch(res.status(SERVER_ERROR.statusCode).send({ message: SERVER_ERROR.message }));
 };
 
 module.exports.getUserId = (req, res) => {
   User.findById(req.params.id)
-    .then((user) => res.send({ data: user }))
-    .catch((err) => validityErr(res, err));
+    .orFail(() => {
+      throw new NotFound(`Карточка ${req.user._id} не найден`);
+    })
+    .then((user) => res.send({ data: user })
+    )
+    .catch((err) => {
+      if (err.statusCode === 404) {
+        res.status(NOT_FOUND.statusCode).send({ message: err.message });
+        return;
+      }if (err.name === 'CastError') {
+        res.status(NOT_VALID.statusCode).send({ message: NOT_VALID.message });
+        return;
+      }
+      res.status(SERVER_ERROR.statusCode).send({ message: SERVER_ERROR.message });
+    });
 };
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .orFail(() => {
-      throw new NotFound(`Пользователь ${req.user._id} не найден`);
-    })
     .then((user) => res.send({ data: user }))
-    .catch((err) => validityErr(res, err));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(NOT_VALID.statusCode).send({ message: NOT_VALID.message });
+        return;
+      }
+      res.status(SERVER_ERROR.statusCode).send({ message: SERVER_ERROR.message });
+    });
 };
 
 module.exports.updateUser = (req, res) => {
@@ -36,7 +49,16 @@ module.exports.updateUser = (req, res) => {
       throw new NotFound(`Пользователь ${req.user._id} не найден`);
     })
     .then((user) => res.send({ data: user }))
-    .catch((err) => validityErr(res, err));
+    .catch((err) => {
+      if (err.statusCode === 404) {
+        res.status(NOT_FOUND.statusCode).send({ message: err.message });
+        return;
+      } if (err.name === 'ValidationError') {
+        res.status(NOT_VALID.statusCode).send({ message: NOT_VALID.message });
+        return;
+      }
+      res.status(SERVER_ERROR.statusCode).send({ message: SERVER_ERROR.message });
+    });
 };
 
 module.exports.updateUserAvatar = (req, res) => {
@@ -46,5 +68,14 @@ module.exports.updateUserAvatar = (req, res) => {
       throw new NotFound(`Пользователь ${req.user._id} не найден`);
     })
     .then((user) => res.send({ data: user }))
-    .catch((err) => validityErr(res, err));
+    .catch((err) => {
+      if (err.statusCode === 404) {
+        res.status(NOT_FOUND.statusCode).send({ message: err.message });
+        return;
+      } if (err.name === 'ValidationError') {
+        res.status(NOT_VALID.statusCode).send({ message: NOT_VALID.message });
+        return;
+      }
+      res.status(SERVER_ERROR.statusCode).send({ message: SERVER_ERROR.message });
+    });
 };
