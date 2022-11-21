@@ -13,13 +13,12 @@ module.exports.getUserId = (req, res) => {
     .orFail(() => {
       throw new NotFound(`Карточка ${req.user._id} не найден`);
     })
-    .then((user) => res.send({ data: user })
-    )
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.statusCode === 404) {
         res.status(NOT_FOUND.statusCode).send({ message: err.message });
         return;
-      }if (err.name === 'CastError') {
+      } if (err.name === 'CastError') {
         res.status(NOT_VALID.statusCode).send({ message: NOT_VALID.message });
         return;
       }
