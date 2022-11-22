@@ -5,7 +5,7 @@ const NotFound = require('../errors/NotFound');
 module.exports.getUser = (req, res) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch(res.status(SERVER_ERROR.statusCode).send({ message: SERVER_ERROR.message }));
+    .catch(() => res.status(SERVER_ERROR.statusCode).send({ message: SERVER_ERROR.message }));
 };
 
 module.exports.getUserId = (req, res) => {
