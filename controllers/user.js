@@ -5,6 +5,8 @@ const Conflict = require('../errors/Conflict');
 const escape = require('escape-html');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { JWT_SECRET, NODE_ENV } = process.env;
+const { secretKey } = require('../constant')
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -38,11 +40,9 @@ module.exports.getUserId = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const name = req.body.name ? escape(req.body.name) : undefined; // эронирование данных от пользователя
-  const about = req.body.about ? escape(req.body.about) : undefined;
-  const avatar = req.body.avatar ? escape(req.body.avatar) : undefined;
-  const email = req.body.email ? escape(req.body.email) : undefined;
-  const password = req.body.password ? escape(req.body.password) : undefined;
+  const { name, about, avatar, email, password } = req.body;
+  
+  console.log(name, about, avatar, email)
   
   bcrypt.hash(password, 10)
     .then((hash) => User.create({ 
@@ -54,6 +54,7 @@ module.exports.createUser = (req, res, next) => {
     }))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
+      console.log(err.message)
       if (err.code === 11000) {
         next(new Conflict('Такой пользователь уже существует'));
       } else if (err.name === 'CastError' || err.name === 'ValidationError') {
@@ -115,7 +116,7 @@ module.exports.login = (req, res, next) => {
         });
     })
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, '123456', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : secretKey, { expiresIn: '7d' });
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7, // 7 дней срок
         httpOnly: true, // из js закрыли доступ

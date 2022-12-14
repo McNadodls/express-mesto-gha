@@ -8,7 +8,6 @@ const {login, createUser} = require('./controllers/user')
 const auth = require('./middlewares/auth')
 const { celebrate, Joi } = require('celebrate');
 const { patternUrl } = require('./constant');
- 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,7 +19,11 @@ app.use(cookieParser());
 app.post('/signin', login);
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(patternUrl)
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().pattern(patternUrl),
   })
 }),createUser);
 app.use(auth); 
