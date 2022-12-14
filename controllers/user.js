@@ -42,8 +42,6 @@ module.exports.getUserId = (req, res, next) => {
 module.exports.createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
   
-  console.log(name, about, avatar, email)
-  
   bcrypt.hash(password, 10)
     .then((hash) => User.create({ 
       name, 
@@ -52,9 +50,12 @@ module.exports.createUser = (req, res, next) => {
       email, 
       password: hash
     }))
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      const userObj = user.toObject();
+      delete userObj.password;
+      res.send(userObj);
+    })
     .catch((err) => {
-      console.log(err.message)
       if (err.code === 11000) {
         next(new Conflict('Такой пользователь уже существует'));
       } else if (err.name === 'CastError' || err.name === 'ValidationError') {

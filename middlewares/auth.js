@@ -6,7 +6,7 @@ const { secretKey } = require('../constant')
 module.exports = (req, res, next) => {
   const token = req.cookies.jwt;
   if (!token) {
-    next(new NotFound('Необходимо авторизоваться'));
+    next(new Unauthorized('Необходимо авторизоваться'));
     return;
   }
 
@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : secretKey);
   } catch (err) {
-    next(new NotFound('Необходимо авторизоваться'));
+    next(new Unauthorized('Необходимо авторизоваться'));
     return;
   }
 
