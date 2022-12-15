@@ -105,13 +105,13 @@ module.exports.login = (req, res, next) => {
   User.findOne({email}).select('+password')
     .then((user) => {
       if (!user) {
-       return Promise.reject(new NotFound(`жопа`));
+       return Promise.reject(new Unauthorized(`Неправильные почта или пароль`));
       }
       
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new NotFound(`Неправильные почта или пароль`));
+            return Promise.reject(new Unauthorized(`Неправильные почта или пароль`));
           }
           return user;
         });
