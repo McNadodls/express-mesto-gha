@@ -1,12 +1,13 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFound = require('../errors/NotFound');
 const BadRequest = require('../errors/BadRequest');
 const Conflict = require('../errors/Conflict');
-const escape = require('escape-html');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const Unauthorized = require('../errors/Unauthorized');
+
 const { JWT_SECRET, NODE_ENV } = process.env;
-const { secretKey } = require('../constant')
+const { secretKey } = require('../constant');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -15,7 +16,6 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
-  console.log(req.user);
   User.findById(req.user._id)
     .orFail(() => {
       throw new NotFound('Пользователь не найден');
@@ -40,15 +40,17 @@ module.exports.getUserId = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
-  
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+
   bcrypt.hash(password, 10)
-    .then((hash) => User.create({ 
-      name, 
-      about, 
-      avatar, 
-      email, 
-      password: hash
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
     }))
     .then((user) => {
       const userObj = user.toObject();
@@ -102,16 +104,16 @@ module.exports.updateUserAvatar = (req, res, next) => {
 module.exports.login = (req, res, next) => {
   const { password, email } = req.body;
 
-  User.findOne({email}).select('+password')
+  User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-       return Promise.reject(new Unauthorized(`Неправильные почта или пароль`));
+        return Promise.reject(new Unauthorized('Неправильные почта или пароль'));
       }
-      
+
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new Unauthorized(`Неправильные почта или пароль`));
+            return Promise.reject(new Unauthorized('Неправильные почта или пароль'));
           }
           return user;
         });
@@ -119,12 +121,13 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : secretKey, { expiresIn: '7d' });
       res.cookie('jwt', token, {
-        maxAge: 3600000 * 24 * 7, // 7 дней срок
-        httpOnly: true, // из js закрыли доступ
-        sameSite: true, // посылать если запрос сделан с того же домена
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: true,
       });
-      res.send(user);
-        })
-      .catch(next);
-  // ...
-}; 
+      const userObj = user.toObject();
+      delete userObj.password;
+      res.send(userObj);
+    })
+    .catch(next);
+};
