@@ -11,6 +11,21 @@ const { login, createUser } = require('./controllers/user');
 const auth = require('./middlewares/auth');
 const { patternUrl } = require('./constant');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const cors = require('cors');
+
+const options = {
+origin: [
+'http://localhost:3000',
+'https://mesto.mcnad.nomoredomains.club',
+],
+methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+preflightContinue: false,
+optionsSuccessStatus: 204,
+allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
+credentials: true,
+};
+
+app.use('*', cors(options)); // ПЕРВЫМ!
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
