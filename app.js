@@ -1,9 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
-
 const app = express();
 const cookieParser = require('cookie-parser');
-
 const { PORT = 3000 } = process.env;
 const { celebrate, Joi } = require('celebrate');
 const NotFound = require('./errors/NotFound');
@@ -53,6 +51,6 @@ app.use(errorLogger);
 app.use((req, res, next) => {
   next(new NotFound('Такой страницы нет'));
 });
-app.use(require('./errors/centralizedErrorHandling'));
+//app.use(require('./errors/centralizedErrorHandling'));
 
 app.listen(PORT);
