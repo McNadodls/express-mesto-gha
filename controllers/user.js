@@ -11,7 +11,7 @@ const { secretKey } = require('../constant');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch(next);
 };
 
@@ -29,7 +29,7 @@ module.exports.getUserId = (req, res, next) => {
     .orFail(() => {
       throw new NotFound(`Карточка ${req.user._id} не найден`);
     })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequest('Неправильные данные'));
@@ -43,6 +43,7 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
+  console.log(email)
 
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
@@ -75,7 +76,7 @@ module.exports.updateUser = (req, res, next) => {
     .orFail(() => {
       throw new NotFound(`Пользователь ${req.user._id} не найден`);
     })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequest('Неправильные данные'));
@@ -91,7 +92,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
     .orFail(() => {
       throw new NotFound(`Пользователь ${req.user._id} не найден`);
     })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequest('Неправильные данные'));

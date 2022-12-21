@@ -51,6 +51,6 @@ app.use(errorLogger);
 app.use((req, res, next) => {
   next(new NotFound('Такой страницы нет'));
 });
-//app.use(require('./errors/centralizedErrorHandling'));
+app.use(require('./errors/centralizedErrorHandling'));
 
 app.listen(PORT);
