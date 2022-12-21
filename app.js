@@ -10,6 +10,7 @@ const NotFound = require('./errors/NotFound');
 const { login, createUser } = require('./controllers/user');
 const auth = require('./middlewares/auth');
 const { patternUrl } = require('./constant');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -18,6 +19,7 @@ mongoose.set('strictQuery', false);
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(cookieParser());
+app.use(requestLogger);
 app.post('/signin', login);
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -31,6 +33,7 @@ app.post('/signup', celebrate({
 app.use(auth);
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
+app.use(errorLogger);
 
 app.use((req, res, next) => {
   next(new NotFound('Такой страницы нет'));
