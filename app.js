@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const { PORT = 3000 } = process.env;
 const { celebrate, Joi } = require('celebrate');
 const NotFound = require('./errors/NotFound');
-const { login, createUser } = require('./controllers/user');
+const { login, createUser, logout } = require('./controllers/user');
 const auth = require('./middlewares/auth');
 const { patternUrl } = require('./constant');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -44,6 +44,7 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 app.use(auth);
+router.get('/logout', logout);
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
 app.use(errorLogger);

@@ -132,3 +132,12 @@ module.exports.login = (req, res, next) => {
     })
     .catch(next);
 };
+
+module.exports.logout = (req, res) => {
+  res.cookie('jwt', '', {
+    maxAge: 0,
+    httpOnly: true,
+    sameSite: true,
+  });
+  res.send({ message: 'Complete' });
+};
