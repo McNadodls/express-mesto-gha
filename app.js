@@ -44,7 +44,7 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 app.use(auth);
-router.get('/logout', logout);
+app.get('/logout', logout);
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
 app.use(errorLogger);
