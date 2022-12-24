@@ -32,7 +32,7 @@ module.exports.deleteCard = (req, res, next) => {
         next(new Forbidden('Нельзя удалить чужую карточку'));
       } else {
         Card.findByIdAndRemove(card)
-        .then(() => res.send(card));
+          .then(() => res.send(card));
       }
     })
     .catch(next);
