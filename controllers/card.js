@@ -4,7 +4,7 @@ const BadRequest = require('../errors/BadRequest');
 const Forbidden = require('../errors/Forbidden');
 
 module.exports.getCard = (req, res, next) => {
-  Card.find({})
+  Card.find({}).sort({ createdAt: -1 })
     .then((card) => res.send(card))
     .catch(next);
 };
