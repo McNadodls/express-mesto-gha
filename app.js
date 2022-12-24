@@ -57,11 +57,11 @@ app.use(auth);
 app.get('/logout', logout);
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
-app.use(errorLogger);
 
 app.use((req, res, next) => {
   next(new NotFound('Такой страницы нет'));
 });
+app.use(errorLogger);
 app.use(require('./errors/centralizedErrorHandling'));
 
 app.listen(PORT);
