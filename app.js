@@ -60,7 +60,7 @@ app.get('/logout', logout);
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
 
-router.use(errors({
+app.use(errors({
   message: 'Введены некорректные данные',
 }));
 
