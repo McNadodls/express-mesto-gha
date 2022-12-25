@@ -1,11 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 const app = express();
 const cookieParser = require('cookie-parser');
 
-const { PORT = 3000 } = process.env;
-const { celebrate, Joi } = require('celebrate');
+const { PORT = 3000, CONNECT_DB, NODE_ENV } = process.env;
+const { celebrate, Joi, errors } = require('celebrate');
 const cors = require('cors');
 const NotFound = require('./errors/NotFound');
 const { login, createUser, logout } = require('./controllers/user');
@@ -29,9 +30,8 @@ app.use('*', cors(options)); // ПЕРВЫМ!
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 mongoose.set('strictQuery', false);
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+mongoose.connect(NODE_ENV === 'production' ? CONNECT_DB : 'mongodb://localhost:27017/mestodb');
 
 app.use(cookieParser());
 app.use(requestLogger);
@@ -59,6 +59,10 @@ app.use(auth);
 app.get('/logout', logout);
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
+
+router.use(errors({
+  message: 'Введены некорректные данные',
+}));
 
 app.use((req, res, next) => {
   next(new NotFound('Такой страницы нет'));
