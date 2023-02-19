@@ -1,7 +1,8 @@
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
 # Проект Mesto фронтенд + бэкенд
 
-Данный проект является пробой бэкенда
+Данный код относится к [Проекту: Место](https://github.com/McNadodls/react-mesto-api-full). 
+Является третим этапом разработки - написание собственного сервера.
 
 ## Директории
 
